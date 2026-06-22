@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: demo-api
-        image: mi-api-academica:latest
+        image: chaconnico/mi-api-academica:latest
         ports:
         - containerPort: 8080
 ---
