@@ -86,35 +86,6 @@ jobs:
           # Sube al Hub todas las etiquetas que acabamos de crear para esta imagen
           docker push --all-tags "${IMAGEN_COMPLETA}"
 
-<<<<<<< HEAD
-  deploy-to-k8s:
-    name: Deploy to AWS K3S
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    steps:
-      - uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.EA2_SSH_PRIVATE_KEY }}
-
-      - name: 1 · SSH al servidor K3S
-        run: ssh -o StrictHostKeyChecking=accept-new "ubuntu@${{ inputs.k3s-server-public-ip }}" 'echo ok'
-
-      # Manifiestos viven en el repo que invoca este workflow (ej. k8s/demo.yaml)
-      - name: Checkout (manifiestos K8s)
-        uses: actions/checkout@v4
-
-      - name: Copiar k8s/ al servidor y aplicar
-        run: |
-          set -euo pipefail
-          test -d k8s || { echo "::error::Falta carpeta k8s/ en la raíz del repo"; exit 1; }
-          ssh -o StrictHostKeyChecking=accept-new "ubuntu@${{ inputs.k3s-server-public-ip }}" 'sudo rm -rf /tmp/k8s-deploy'
-          scp -o StrictHostKeyChecking=accept-new -r k8s "ubuntu@${{ inputs.k3s-server-public-ip }}:/tmp/k8s-deploy"
-          ssh -o StrictHostKeyChecking=accept-new "ubuntu@${{ inputs.k3s-server-public-ip }}" \
-            'sudo k3s kubectl apply -f /tmp/k8s-deploy/'
-
-      - name: Verificar pods
-        run: ssh -o StrictHostKeyChecking=accept-new "ubuntu@${{ inputs.k3s-server-public-ip }}" 'sudo k3s kubectl get pods -o wide'
-=======
 deploy-to-k8s:
   name: Deploy to AWS K3S
   needs: build-and-push
@@ -152,4 +123,3 @@ deploy-to-k8s:
       run: ssh -o StrictHostKeyChecking=accept-new "ubuntu@${{ inputs.k3s-server-public-ip }}" \
         'sudo k3s kubectl rollout undo deployment/demo-api && sudo k3s kubectl rollout status deployment/demo-api --timeout=60s'
 
->>>>>>> a1d3808 (reupload)
